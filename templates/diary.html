@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+{% block content %}
+  <div class="card">
+    <form method="get" action="{{ url_for('diary') }}" class="search-form">
+      <input name="q" value="{{ q }}" placeholder="Search your diary by keyword or tag" style="flex:1;padding:10px;border-radius:8px;border:1px solid rgba(16,24,40,0.06)">
+      <button class="btn primary" style="margin-left:8px">Search</button>
+    </form>
+  </div>
+
+  <div class="diary-list">
+    {% for e in entries %}
+      <article class="letter card" style="border-left-color: {{ e.mood|mood_color }};">
+        <header>
+          <div class="meta">{{ e.date }}{% if e.tags %} • {% for t in e.tags %}{{ t.name }}{% if not loop.last %}, {% endif %}{% endfor %}{% endif %}</div>
+        </header>
+        <div class="body">
+          <p class="lead">
+            <span class="badge" style="background: {{ e.mood|mood_color }}">Mood: {{ e.mood }}</span>
+            <span class="badge" style="background: {{ e.energy|energy_color }}">Energy: {{ e.energy }}</span>
+            <span class="badge" style="background: {{ e.anxiety|anxiety_color }}">Anxiety: {{ e.anxiety }}</span>
+          </p>
+          <p>{{ e.event_description or '—' }}</p>
+        </div>
+      </article>
+    {% else %}
+      <p>No entries found.</p>
+    {% endfor %}
+  </div>
+
+  <div class="pagination card center">
+    <div class="pages">
+      {% if page > 1 %}
+        <a href="{{ url_for('diary', page=page-1, q=q) }}" class="btn ghost">Previous</a>
+      {% endif %}
+      <span class="muted">Page {{ page }} of {{ total_pages }}</span>
+      {% if page < total_pages %}
+        <a href="{{ url_for('diary', page=page+1, q=q) }}" class="btn ghost">Next</a>
+      {% endif %}
+    </div>
+  </div>
+
+{% endblock %}

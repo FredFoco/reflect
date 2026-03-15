@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% block content %}
+  <h2>Entry History</h2>
+  <div class="card">
+    <table class="table">
+      <thead>
+        <tr><th>Date</th><th>Mood</th><th>Energy</th><th>Anxiety</th><th>Tags</th><th>Actions</th></tr>
+      </thead>
+      <tbody>
+      {% for e in entries %}
+        <tr>
+          <td>{{ e.date }}</td>
+          <td><span class="badge" style="background: {{ e.mood|mood_color }}">{{ e.mood }}</span></td>
+          <td><span class="badge" style="background: {{ e.energy|energy_color }}">{{ e.energy }}</span></td>
+          <td><span class="badge" style="background: {{ e.anxiety|anxiety_color }}">{{ e.anxiety }}</span></td>
+          <td>{% for t in e.tags %}{{ t.name }}{% if not loop.last %}, {% endif %}{% endfor %}</td>
+          <td>
+            <a href="/edit/{{ e.id }}">Edit</a>
+            <form method="post" action="/delete/{{ e.id }}" style="display:inline">
+              <button type="submit" onclick="return confirm('Delete this entry?')" class="btn ghost">Delete</button>
+            </form>
+          </td>
+        </tr>
+      {% else %}
+        <tr><td colspan="6">No entries yet.</td></tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% endblock %}

@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% block content %}
+  <div class="card">
+    <h2 style="margin-top:0">Quick Entry</h2>
+    <p class="muted">Capture how you're feeling—brief daily notes help identify patterns.</p>
+    <form method="post" action="{{ url_for('new_entry') }}" class="form">
+      <div class="row">
+        <label>Date</label>
+        <input class="input" type="date" name="date" value="{{ default_date }}">
+      </div>
+      <div class="row two-col">
+        <div>
+          <label>Mood (0-10)</label>
+          <input class="input" type="number" name="mood" min="0" max="10" value="5">
+        </div>
+        <div>
+          <label>Energy (0-10)</label>
+          <input class="input" type="number" name="energy" min="0" max="10" value="5">
+        </div>
+      </div>
+      <div class="row">
+        <label>Anxiety (0-10)</label>
+        <input class="input" type="number" name="anxiety" min="0" max="10" value="5">
+      </div>
+      <div class="row">
+        <label>Event description</label>
+        <textarea class="input" name="event_description" rows="4" placeholder="What happened or what were you thinking?"></textarea>
+      </div>
+      <div class="row">
+        <label>Tags (comma-separated)</label>
+        <input class="input" name="tags" placeholder="work, health, family">
+      </div>
+      <div class="actions">
+        <button type="submit" class="btn primary">Save Entry</button>
+        <a href="/dashboard" class="btn ghost">Cancel</a>
+      </div>
+    </form>
+  </div>
+{% endblock %}

@@ -1,0 +1,110 @@
+{% extends 'base.html' %}
+{% block content %}
+  <div class="page-header">
+      <h1>Dashboard</h1>
+      <p class="muted">Overview of your mood, energy, and anxiety. Quick insights to reflect and act.</p>
+    </div>
+
+    <div class="dashboard-layout">
+      <aside class="sidebar">
+        <div class="card section">
+          <h4>Quick stats</h4>
+          <div style="display:flex;flex-direction:column;gap:8px">
+            <div class="sub muted">Current streak</div>
+            <div style="font-weight:800;font-size:20px">{{ streak }} day(s)</div>
+            <div class="sub muted" style="margin-top:8px">Most common tag</div>
+            <div style="font-weight:700">{{ most_common_tag if most_common_tag else '—' }}</div>
+          </div>
+        </div>
+        <div class="card section">
+          <h4>Quick Actions</h4>
+          <a class="quick-link" href="/new">New Entry</a>
+          <a class="quick-link" href="/diary">Read Diary</a>
+          <a class="quick-link" href="/weekly">Weekly Summary</a>
+        </div>
+      </aside>
+
+      <main class="main">
+        <section class="metrics">
+        <div class="card metric">
+          <div class="label">Avg Mood (week)</div>
+          <div class="value">{% if averages.mood is not none %}{{ averages.mood }}{% else %}—{% endif %}</div>
+        </div>
+
+        <div class="card metric">
+          <div class="label">Avg Energy (week)</div>
+          <div class="value">{% if averages.energy is not none %}{{ averages.energy }}{% else %}—{% endif %}</div>
+        </div>
+
+        <div class="card metric">
+          <div class="label">Avg Anxiety (week)</div>
+          <div class="value">{% if averages.anxiety is not none %}{{ averages.anxiety }}{% else %}—{% endif %}</div>
+        </div>
+
+        <div class="card metric">
+          <div class="label">Entries (week)</div>
+          <div class="value">{{ averages.count }}</div>
+        </div>
+
+        <div class="card metric">
+          <div class="label">Current Streak</div>
+          <div class="value">{{ streak }} day(s)</div>
+        </div>
+
+        <div class="card metric">
+          <div class="label">Most common tag</div>
+          <div class="value">{{ most_common_tag if most_common_tag else '—' }}</div>
+        </div>
+        </section>
+
+        <section class="charts">
+        <div class="card chart-card chart-frame">
+          <h4 class="muted">Mood Over Time</h4>
+          <div class="canvas-wrap"><canvas id="moodChart" height="160"></canvas></div>
+        </div>
+
+        <div class="card chart-card chart-frame">
+          <h4 class="muted">Energy & Anxiety</h4>
+          <div class="canvas-wrap"><canvas id="energyAnxietyChart" height="160"></canvas></div>
+        </div>
+        </section>
+
+        <article class="card reflection">
+          <h3 style="margin-top:0">Weekly Reflection</h3>
+          <p class="muted">{{ reflection if reflection else 'No reflections yet.' }}</p>
+        </article>
+    </main>
+  </div>
+
+  <script>
+      const labels = {{ labels|tojson }};
+      const moods = {{ moods|tojson }};
+      const energy = {{ energy|tojson }};
+      const anxiety = {{ anxiety|tojson }};
+
+      const baseGrid = { color: 'rgba(16,24,40,0.04)', lineWidth: 1 };
+      const commonOptions = {
+        maintainAspectRatio: false,
+        plugins: { legend: { display: false }, tooltip: { mode: 'index', intersect: false } },
+        scales: {
+          x: { grid: { display: false } },
+          y: { grid: { display: true, ...baseGrid }, ticks: { color: '#6b7280' } }
+        }
+      };
+
+      new Chart(document.getElementById('moodChart'), {
+        type: 'line',
+        data: { labels: labels, datasets: [{ data: moods, borderColor: getComputedStyle(document.documentElement).getPropertyValue('--primary-600').trim(), backgroundColor: 'rgba(127,179,255,0.12)', tension: 0.38, pointRadius: 4, pointBackgroundColor: 'white' }]},
+        options: commonOptions
+      });
+
+      new Chart(document.getElementById('energyAnxietyChart'), {
+        type: 'line',
+        data: { labels: labels, datasets: [
+          { label: 'Energy', data: energy, borderColor: 'rgba(120,150,200,0.9)', backgroundColor: 'rgba(120,150,200,0.08)', tension: 0.38 },
+          { label: 'Anxiety', data: anxiety, borderColor: 'rgba(200,160,210,0.9)', backgroundColor: 'rgba(200,160,210,0.08)', tension: 0.38 }
+        ]},
+        options: commonOptions
+      });
+  </script>
+{% endblock %}

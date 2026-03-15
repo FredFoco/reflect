@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{% block content %}
+  <h2>Edit Entry</h2>
+  <form method="post">
+    <label>Date</label>
+    <input type="date" name="date" value="{{ entry.date }}">
+    <label>Mood (0-10)</label>
+    <input type="number" name="mood" min="0" max="10" value="{{ entry.mood }}">
+    <label>Energy (0-10)</label>
+    <input type="number" name="energy" min="0" max="10" value="{{ entry.energy }}">
+    <label>Anxiety (0-10)</label>
+    <input type="number" name="anxiety" min="0" max="10" value="{{ entry.anxiety }}">
+    <label>Event description</label>
+    <textarea name="event_description">{{ entry.event_description }}</textarea>
+    <label>Tags (comma-separated)</label>
+    <input name="tags" value="{{ tags }}">
+    <button type="submit">Update</button>
+  </form>
+{% endblock %}
